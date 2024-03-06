@@ -9,5 +9,5 @@ public interface ServiceInterface {
     Flux<Greeting> getAll();
     Mono<Greeting> getGreetings(int id);
     Mono<Greeting> putGreetings(Greeting greeting,int id);
-    Mono<Void> deleteGreetings(int id);
+    Mono<Boolean> deleteGreetings(int id);
 }

@@ -37,7 +37,16 @@ public class Services implements ServiceInterface{
     }
 
     @Override
-    public Mono<Void> deleteGreetings(int id) {
-        return repository.deleteById(id);
+    public Mono<Boolean> deleteGreetings(int id) {
+        return repository.existsById(id)
+                .flatMap(exists->{
+                    if(exists){
+                        return repository.deleteById(id)
+                                .thenReturn(true);
+                    }
+                    else {
+                        return Mono.just(false);
+                    }
+                });
     }
 }

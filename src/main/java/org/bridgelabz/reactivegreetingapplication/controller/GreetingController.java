@@ -46,7 +46,15 @@ public class GreetingController {
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Response>> deleteGreetings(@PathVariable int id) {
         return services.deleteGreetings(id)
-                .then(Mono.just(ResponseEntity.status(HttpStatus.OK)
-                        .body(new Response(200, "Greeting deleted successfully"))));
+                .flatMap(deleted->{
+                    if(deleted){
+                        return Mono.just(ResponseEntity.ok(new Response(HttpStatus.OK.value(),"Deleted Successfully")));
+                    }else {
+                        return Mono.just(ResponseEntity.ok(new Response(HttpStatus.NOT_FOUND.value(), "ID NOT FOUND IN THE DB")));
+                    }
+                }).defaultIfEmpty(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete the element")));
+        //                .then(Mono.just(ResponseEntity.status(HttpStatus.OK)
+//                        .body(new Response(200, "Greeting deleted successfully"))));
     }
 }
